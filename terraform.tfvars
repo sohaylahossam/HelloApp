@@ -39,3 +39,31 @@ tags = {
   ManagedBy   = "Terraform"
   Owner       = "DevOps-Team"
 }
+
+# Add your IAM user for Console access
+additional_iam_users = [
+  {
+    userarn  = "arn:aws:iam::123456789012:user/your-username"  # Replace with YOUR actual ARN from step 5
+    username = "console-admin"
+    groups   = ["system:masters"]
+  }
+]
+
+# Add your IAM user for Console access
+additional_iam_users = [
+  {
+    userarn  = "arn:aws:iam::742674388365:user/cli-user"  # Replace with YOUR actual ARN from step 5
+    username = "cli-user"
+    groups   = ["system:masters"]
+  }
+]
+
+# If you use IAM roles (SSO, assumed roles), add them here instead
+additional_iam_roles = [
+  # Uncomment and modify if you use IAM roles:
+  # {
+  #   rolearn  = "arn:aws:iam::123456789012:role/YourRoleName"
+  #   username = "admin-role"
+  #   groups   = ["system:masters"]
+  # }
+]

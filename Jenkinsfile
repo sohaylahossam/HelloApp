@@ -33,7 +33,7 @@ pipeline {
             }
         }
 
-    /*   
+        /*
         stage('Terraform Destroy') {
             steps {
                 echo "🗑️ Destroying Terraform infrastructure..."
@@ -41,10 +41,10 @@ pipeline {
                 echo "🔥 Infrastructure destroyed successfully!"
             }
         }
-        
+        */
 
-    } // <-- CLOSE stages block properly
-*/
+    }   // <--- Correct closing of stages block
+
     post {
         success {
             echo "🎉 Pipeline completed successfully!"

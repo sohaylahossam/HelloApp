@@ -79,3 +79,55 @@ resource "aws_iam_role_policy_attachment" "eks_cloudwatch_policy" {
   role       = aws_iam_role.eks_node.name
 }
 
+# Data source to get the caller identity (Jenkins IAM principal)
+data "aws_caller_identity" "current" {}
+
+# Get additional IAM users/roles that need access
+variable "additional_iam_users" {
+  description = "Additional IAM users to grant cluster access"
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
+variable "additional_iam_roles" {
+  description = "Additional IAM roles to grant cluster access"
+  type = list(object({
+    rolearn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
+# Output the aws-auth ConfigMap data
+output "aws_auth_configmap_yaml" {
+  description = "AWS auth ConfigMap for EKS"
+  value = yamlencode({
+    apiVersion = "v1"
+    kind       = "ConfigMap"
+    metadata = {
+      name      = "aws-auth"
+      namespace = "kube-system"
+    }
+    data = {
+      mapRoles = yamlencode(concat(
+        [
+          {
+            rolearn  = aws_iam_role.eks_node.arn
+            username = "system:node:{{EC2PrivateDNSName}}"
+            groups = [
+              "system:bootstrappers",
+              "system:nodes"
+            ]
+          }
+        ],
+        var.additional_iam_roles
+      ))
+      mapUsers = yamlencode(var.additional_iam_users)
+    }
+  })
+}
